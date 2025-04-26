@@ -1,0 +1,161 @@
+-- Pear Hub New Key System GUI
+local gui = Instance.new("ScreenGui", game.CoreGui)
+local blur = Instance.new("BlurEffect", game.Lighting)
+blur.Size = 24
+
+local TweenService = game:GetService("TweenService")
+
+local main = Instance.new("Frame", gui)
+main.Size = UDim2.new(0, 320, 0, 220)
+main.Position = UDim2.new(0.5, 0, 0.5, 0)
+main.AnchorPoint = Vector2.new(0.5, 0.5)
+main.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+main.BorderSizePixel = 0
+main.BackgroundTransparency = 0
+main.ClipsDescendants = true
+main.Visible = true
+
+-- Corner roundness
+local corner = Instance.new("UICorner", main)
+corner.CornerRadius = UDim.new(0, 12)
+
+-- Drop shadow
+local shadow = Instance.new("Frame", main)
+shadow.Size = UDim2.new(1, 20, 1, 20)
+shadow.Position = UDim2.new(0, -10, 0, -10)
+shadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+shadow.BackgroundTransparency = 0.8
+shadow.BorderSizePixel = 0
+shadow.ZIndex = 0
+local shadowCorner = Instance.new("UICorner", shadow)
+shadowCorner.CornerRadius = UDim.new(0, 14)
+
+shadow.Parent = main.Parent
+shadow.Visible = true
+
+-- Bring main frame above shadow
+main.ZIndex = 1
+
+-- Title
+local title = Instance.new("TextLabel", main)
+title.Size = UDim2.new(1, 0, 0, 50)
+title.Position = UDim2.new(0, 0, 0, 0)
+title.Text = "Pear Hub | Enter Key"
+title.Font = Enum.Font.FredokaOne
+title.TextSize = 26
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.BackgroundTransparency = 1
+
+-- Input
+local input = Instance.new("TextBox", main)
+input.Size = UDim2.new(0.8, 0, 0, 40)
+input.Position = UDim2.new(0.1, 0, 0.38, 0)
+input.PlaceholderText = "Enter Key Here..."
+input.Font = Enum.Font.Gotham
+input.TextSize = 18
+input.TextColor3 = Color3.new(1, 1, 1)
+input.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+input.BorderSizePixel = 0
+Instance.new("UICorner", input).CornerRadius = UDim.new(0, 8)
+
+-- Submit Button
+local submit = Instance.new("TextButton", main)
+submit.Size = UDim2.new(0.8, 0, 0, 40)
+submit.Position = UDim2.new(0.1, 0, 0.62, 0)
+submit.Text = "Submit"
+submit.Font = Enum.Font.GothamBold
+submit.TextSize = 20
+submit.TextColor3 = Color3.new(1, 1, 1)
+submit.BackgroundColor3 = Color3.fromRGB(80, 80, 255)
+submit.BorderSizePixel = 0
+Instance.new("UICorner", submit).CornerRadius = UDim.new(0, 8)
+
+-- Get Key Button
+local getKey = Instance.new("TextButton", main)
+getKey.Size = UDim2.new(0.8, 0, 0, 30)
+getKey.Position = UDim2.new(0.1, 0, 0.85, 0)
+getKey.Text = "Get Key"
+getKey.Font = Enum.Font.Gotham
+getKey.TextSize = 18
+getKey.TextColor3 = Color3.new(1, 1, 1)
+getKey.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+getKey.BorderSizePixel = 0
+Instance.new("UICorner", getKey).CornerRadius = UDim.new(0, 8)
+
+-- Fade-in effect
+main.BackgroundTransparency = 1
+title.TextTransparency = 1
+input.BackgroundTransparency = 1
+submit.BackgroundTransparency = 1
+getKey.BackgroundTransparency = 1
+
+task.spawn(function()
+    for i = 1, 10 do
+        main.BackgroundTransparency = main.BackgroundTransparency - 0.1
+        title.TextTransparency = title.TextTransparency - 0.1
+        input.BackgroundTransparency = input.BackgroundTransparency - 0.1
+        submit.BackgroundTransparency = submit.BackgroundTransparency - 0.1
+        getKey.BackgroundTransparency = getKey.BackgroundTransparency - 0.1
+        wait(0.05)
+    end
+end)
+
+-- Functions
+getKey.MouseButton1Click:Connect(function()
+    setclipboard("https://discord.gg/8TkFzFnp")
+end)
+
+submit.MouseButton1Click:Connect(function()
+    if input.Text == "pear" then
+        -- Correct Key
+        title.Text = "✅ Welcome to Pear Hub!"
+        input.Visible = false
+        submit.Visible = false
+        getKey.Visible = false
+
+        -- Particle Explosion
+        for i = 1, 120 do
+            local particle = Instance.new("Frame", gui)
+            particle.Size = UDim2.new(0,5,0,5)
+            particle.Position = UDim2.new(0.5, 0, 0.5, 0)
+            particle.BackgroundColor3 = Color3.fromRGB(math.random(200,255), math.random(200,255), math.random(200,255))
+            particle.BorderSizePixel = 0
+            local particleCorner = Instance.new("UICorner", particle)
+            particleCorner.CornerRadius = UDim.new(1, 0)
+
+            local goal = {
+                Position = UDim2.new(math.random(),0,math.random(),0),
+                BackgroundTransparency = 1,
+                Size = UDim2.new(0,0,0,0)
+            }
+
+            local tween = TweenService:Create(particle, TweenInfo.new(1.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), goal)
+            tween:Play()
+
+            game:GetService("Debris"):AddItem(particle, 1.5)
+        end
+
+        -- Shrink everything
+        TweenService:Create(main, TweenInfo.new(1), {Size = UDim2.new(0,0,0,0)}):Play()
+        TweenService:Create(blur, TweenInfo.new(1), {Size = 0}):Play()
+
+        wait(2)
+
+        gui:Destroy()
+        blur:Destroy()
+
+        wait(0.5)
+
+        -- Load RO-HUB
+        _G.settings = {
+            autoLoadConfig = false,
+            joinTeam = "Pirates" -- "Pirates" or "Marines"
+        }
+
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/RO-HUB-CODEX/RO-HUB/refs/heads/main/bloxfruits.lua"))()
+    else
+        title.Text = "❌ Wrong Key!"
+        wait(1)
+        title.Text = "Pear Hub | Enter Key"
+    end
+end)
